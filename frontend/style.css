@@ -1,0 +1,989 @@
+/* ===================================
+   IUBBot AI
+   Proyecto de Investigación
+=================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    background:#f5f7fb;
+
+    color:#333;
+
+}
+
+/*=========================
+      NAVBAR
+=========================*/
+
+.navbar{
+
+    padding:18px 0;
+
+}
+
+.logo{
+
+    width:70px;
+
+}
+
+.navbar-brand h5{
+
+    color:#003A70;
+
+    font-weight:700;
+
+}
+
+.nav-link{
+
+    color:#333;
+
+    font-weight:500;
+
+    margin-left:15px;
+
+    transition:.3s;
+
+}
+
+.nav-link:hover{
+
+    color:#0057B8;
+
+}
+
+/*=========================
+        HERO
+=========================*/
+
+.hero{
+
+    background:linear-gradient(
+        rgba(0,50,120,.75),
+        rgba(0,50,120,.75)
+    ),
+
+    url(hero.jpg);
+
+    background-size:cover;
+
+    background-position:center;
+
+    min-height:90vh;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.overlay{
+
+    width:100%;
+
+    padding:80px 0;
+
+}
+
+.hero h1{
+
+    color:white;
+
+    font-size:3rem;
+
+    font-weight:700;
+
+    line-height:1.3;
+
+}
+
+.hero span{
+
+    color:#FFD24D;
+
+}
+
+.hero p{
+
+    color:white;
+
+    font-size:18px;
+
+    margin:30px 0;
+
+    line-height:32px;
+
+}
+
+.hero-img{
+
+    width:100%;
+
+    max-width:550px;
+
+    border-radius:20px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+
+}
+
+.btn-primary{
+
+    background:#FFD24D;
+
+    color:#003A70;
+
+    border:none;
+
+    font-weight:600;
+
+    padding:14px 30px;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+}
+
+.btn-primary:hover{
+
+    background:white;
+
+    color:#003A70;
+
+}
+
+/*=========================
+       TARJETAS
+=========================*/
+
+.card{
+
+    border:none;
+
+    border-radius:18px;
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.icon{
+
+    font-size:55px;
+
+    color:#0057B8;
+
+    margin-bottom:20px;
+
+}
+
+.card h4{
+
+    font-weight:600;
+
+    margin-bottom:15px;
+
+}
+
+.card p{
+
+    color:#666;
+
+    line-height:28px;
+
+}
+/*=========================
+     PROGRAMAS
+=========================*/
+
+#programas{
+
+    background:#eef4fb;
+
+}
+
+#programas h2{
+
+    font-weight:700;
+
+    color:#003A70;
+
+}
+
+#programas p{
+
+    color:#666;
+
+}
+
+.program-card{
+
+    overflow:hidden;
+
+    transition:.35s;
+
+}
+
+.program-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+}
+
+.program-card .card-body{
+
+    padding:35px;
+
+    text-align:center;
+
+}
+
+.program-card h4{
+
+    margin-top:15px;
+
+    color:#003A70;
+
+    font-weight:600;
+
+}
+
+/*=========================
+       NOTICIAS
+=========================*/
+
+#noticias{
+
+    padding-top:80px;
+
+    padding-bottom:80px;
+
+}
+
+#noticias h2{
+
+    color:#003A70;
+
+    font-weight:700;
+
+}
+
+#noticias .card{
+
+    overflow:hidden;
+
+}
+
+#noticias img{
+
+    height:220px;
+
+    object-fit:cover;
+
+}
+
+#noticias h5{
+
+    color:#003A70;
+
+    font-weight:600;
+
+}
+
+#noticias p{
+
+    color:#666;
+
+    line-height:28px;
+
+}
+
+/*=========================
+        FOOTER
+=========================*/
+
+footer{
+
+    background:#003A70;
+
+    color:white;
+
+    padding:45px 0;
+
+}
+
+footer h4{
+
+    font-weight:700;
+
+}
+
+footer p{
+
+    margin-bottom:8px;
+
+    opacity:.9;
+
+}
+
+/*=========================
+      CHAT BUTTON
+=========================*/
+
+.chat-button{
+
+    position:fixed;
+
+    bottom:30px;
+
+    right:30px;
+
+    width:72px;
+
+    height:72px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#0057B8;
+
+    color:white;
+
+    font-size:30px;
+
+    cursor:pointer;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+    transition:.3s;
+
+    z-index:9999;
+
+}
+
+.chat-button:hover{
+
+    transform:scale(1.08);
+
+    background:#003A70;
+
+}
+
+/*=========================
+      CHAT CONTAINER
+=========================*/
+
+.chat-container{
+
+    position:fixed;
+
+    right:30px;
+
+    bottom:120px;
+
+    width:380px;
+
+    height:580px;
+
+    background:white;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+    display:none;
+
+    flex-direction:column;
+
+    z-index:9998;
+
+}
+/*=========================
+        CHAT HEADER
+=========================*/
+
+.chat-header{
+
+    background:#003A70;
+
+    color:white;
+
+    padding:18px 20px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.chat-header h5{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+.chat-header small{
+
+    color:#9dffb3;
+
+    font-size:13px;
+
+}
+
+#closeChat{
+
+    background:none;
+
+    border:none;
+
+    color:white;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+}
+
+/*=========================
+         CHAT BODY
+=========================*/
+
+.chat-body{
+
+    flex:1;
+
+    padding:20px;
+
+    background:#f7f9fc;
+
+    overflow-y:auto;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+/* Scroll */
+
+.chat-body::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.chat-body::-webkit-scrollbar-thumb{
+
+    background:#cfcfcf;
+
+    border-radius:10px;
+
+}
+
+/*=========================
+      MENSAJES BOT
+=========================*/
+
+.bot-message{
+
+    max-width:85%;
+
+    background:white;
+
+    padding:14px 18px;
+
+    border-radius:18px;
+
+    border-top-left-radius:5px;
+
+    box-shadow:0 5px 12px rgba(0,0,0,.08);
+
+    animation:fade .3s;
+
+    line-height:26px;
+
+}
+
+/*=========================
+     MENSAJES USUARIO
+=========================*/
+
+.user-message{
+
+    align-self:flex-end;
+
+    max-width:85%;
+
+    background:#0057B8;
+
+    color:white;
+
+    padding:14px 18px;
+
+    border-radius:18px;
+
+    border-top-right-radius:5px;
+
+    animation:fade .3s;
+
+    line-height:26px;
+
+}
+
+/*=========================
+      CHAT FOOTER
+=========================*/
+
+.chat-footer{
+
+    background:white;
+
+    padding:18px;
+
+    display:flex;
+
+    gap:10px;
+
+    border-top:1px solid #eee;
+
+}
+
+.chat-footer input{
+
+    flex:1;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    padding:12px 15px;
+
+    outline:none;
+
+    font-size:15px;
+
+}
+
+.chat-footer input:focus{
+
+    border-color:#0057B8;
+
+}
+
+.chat-footer button{
+
+    width:52px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#0057B8;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.chat-footer button:hover{
+
+    background:#003A70;
+
+}
+
+/*=========================
+      PENSANDO...
+=========================*/
+
+.typing{
+
+    display:flex;
+
+    gap:6px;
+
+    align-items:center;
+
+    padding:15px;
+
+    width:70px;
+
+    background:white;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 12px rgba(0,0,0,.08);
+
+}
+
+.typing span{
+
+    width:10px;
+
+    height:10px;
+
+    background:#999;
+
+    border-radius:50%;
+
+    animation:typing .8s infinite;
+
+}
+
+.typing span:nth-child(2){
+
+    animation-delay:.2s;
+
+}
+
+.typing span:nth-child(3){
+
+    animation-delay:.4s;
+
+}
+
+/*=========================
+      ANIMACIONES
+=========================*/
+
+@keyframes fade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes typing{
+
+    0%{
+
+        transform:translateY(0);
+
+        opacity:.4;
+
+    }
+
+    50%{
+
+        transform:translateY(-6px);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+        opacity:.4;
+
+    }
+
+}
+/*=========================
+      RESPONSIVE
+=========================*/
+
+@media(max-width:992px){
+
+.hero{
+
+padding-top:60px;
+
+padding-bottom:60px;
+
+text-align:center;
+
+}
+
+.hero h1{
+
+font-size:2.3rem;
+
+}
+
+.hero-img{
+
+margin-top:40px;
+
+max-width:420px;
+
+}
+
+.logo{
+
+width:60px;
+
+}
+
+.chat-container{
+
+width:340px;
+
+height:550px;
+
+right:15px;
+
+bottom:105px;
+
+}
+
+.chat-button{
+
+right:20px;
+
+bottom:20px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.hero h1{
+
+font-size:2rem;
+
+}
+
+.hero p{
+
+font-size:16px;
+
+line-height:28px;
+
+}
+
+.chat-container{
+
+width:95%;
+
+height:80vh;
+
+right:2.5%;
+
+bottom:95px;
+
+}
+
+.chat-footer input{
+
+font-size:14px;
+
+}
+
+footer{
+
+text-align:center;
+
+}
+
+}
+
+@media(max-width:576px){
+
+.hero{
+
+min-height:80vh;
+
+}
+
+.hero h1{
+
+font-size:1.7rem;
+
+}
+
+.hero-img{
+
+max-width:100%;
+
+}
+
+.chat-button{
+
+width:65px;
+
+height:65px;
+
+font-size:26px;
+
+}
+
+.chat-container{
+
+height:78vh;
+
+}
+
+}
+
+/*=========================
+     EFECTOS EXTRA
+=========================*/
+
+.card{
+
+transition:.35s ease;
+
+}
+
+.card:hover{
+
+transform:translateY(-10px);
+
+box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+}
+
+.btn{
+
+transition:.3s;
+
+}
+
+.btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+.hero-img{
+
+transition:.4s;
+
+}
+
+.hero-img:hover{
+
+transform:scale(1.02);
+
+}
+
+.chat-container{
+
+animation:chatOpen .25s ease;
+
+}
+
+@keyframes chatOpen{
+
+from{
+
+opacity:0;
+
+transform:translateY(30px) scale(.95);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0) scale(1);
+
+}
+
+}
+
+.chat-button{
+
+animation:float 3s ease-in-out infinite;
+
+}
+
+@keyframes float{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-8px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+
+input::placeholder{
+
+color:#999;
+
+}
+
+button{
+
+outline:none;
+
+}
+
+button:focus{
+
+outline:none;
+
+}
+
+section{
+
+scroll-margin-top:90px;
+
+}
