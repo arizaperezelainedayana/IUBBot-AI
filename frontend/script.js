@@ -193,7 +193,7 @@ async function responder(texto){
 
     try{
 
-        const response = await fetch("https://iub-bot-ai-ko6y.vercel.app/chat",{
+        const response = await fetch("https:iub-bot-ai-ko6y.vercel.app",{
 
             method:"POST",
 
