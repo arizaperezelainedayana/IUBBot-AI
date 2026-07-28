@@ -1,341 +1,91 @@
+JavaScript
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
-import { GoogleGenAI } from "@google/genai";
-
-/*==================================
-        CONFIGURACIÓN
-==================================*/
+import Groq from "groq-sdk";
 
 dotenv.config();
 
 const app = express();
-
 app.use(cors());
-
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
-
-/*==================================
-        GEMINI
-==================================*/
-
-const ai = new GoogleGenAI({
-
-    apiKey: process.env.GEMINI_API_KEY
-
+// Configuración de la base de datos usando Pool (más estable)
+const conexion = mysql.createPool({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-/*==================================
-        MYSQL
-==================================*/
-
-let conexion;
-
-async function conectarBD(){
-
-    try{
-
-        conexion = await mysql.createConnection({
-
-            host:process.env.DB_HOST,
-
-            port:process.env.DB_PORT,
-
-            user:process.env.DB_USER,
-
-            password:process.env.DB_PASSWORD,
-
-            database:process.env.DB_NAME
-
-        });
-
-        console.log("✅ Base de datos conectada");
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-        process.exit();
-
-    }
-
-}
-
-/*==================================
-        PALABRAS CLAVE
-==================================*/
-
-const palabrasClave=[
-
-"matriculas",
-
-"programas",
-
-"biblioteca",
-
-"bienestar",
-
-"admisiones",
-
-"inscripcion",
-
-"certificados",
-
-"pagos",
-
-"campus virtual",
-
-"contacto",
-
-"horarios"
-
-];
-
-/*==================================
-        RUTA PRINCIPAL
-==================================*/
-
-app.get("/",(req,res)=>{
-
-    res.json({
-
-        estado:true,
-
-        proyecto:"IUBBot AI",
-
-        mensaje:"Servidor funcionando correctamente"
-
-    });
-
+// Configuración de Groq AI
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY
 });
-/*==================================
-        BUSCAR FAQ
-==================================*/
 
-async function buscarRespuesta(pregunta){
+// Función para buscar en la base de datos
+async function buscarRespuesta(mensaje) {
+    const palabrasClave = mensaje.toLowerCase().split(" ");
 
-    const texto = pregunta
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g,"")
-        .replace(/[^\w\s]/g," ")
-        .replace(/\s+/g," ")
-        .trim();
+    for (let palabra of palabrasClave) {
+        if (palabra.length < 4) continue; // Ignora palabras muy cortas (de, la, el...)
 
-    console.log("");
-    console.log("==============================");
-    console.log("Pregunta:",texto);
+        // Búsqueda flexible con LIKE
+        const [faq] = await conexion.execute(
+            "SELECT respuesta FROM faq WHERE pregunta LIKE ? LIMIT 1",
+            [`%${palabra}%`]
+        );
 
-    for(const palabra of palabrasClave){
-
-        if(texto.includes(palabra)){
-
-            console.log("Palabra encontrada:",palabra);
-
-            const [faq]=await conexion.execute(
-
-                "SELECT respuesta FROM faq WHERE pregunta=? LIMIT 1",
-
-                [palabra]
-
-            );
-
-            if(faq.length){
-
-                console.log("Respuesta encontrada en MySQL");
-
-                return faq[0].respuesta;
-
-            }
-
+        if (faq.length > 0) {
+            return faq[0].respuesta;
         }
-
     }
-
-    console.log("No existe en la base de datos");
-
     return null;
-
 }
 
-/*==================================
-        GEMINI
-==================================*/
+// Ruta principal del chatbot
+app.post("/chat", async (req, res) => {
+    try {
+        const { mensaje } = req.body;
 
-async function responderConGemini(pregunta){
+        // 1. Primero intenta buscar en la base de datos
+        const respuestaBD = await buscarRespuesta(mensaje);
 
-    try{
-
-        console.log("Consultando Gemini...");
-
-        const result = await ai.models.generateContent({
-
-            model: process.env.GEMINI_MODEL,
-
-            contents:`
-
-Eres IUBBot AI.
-
-Eres el asistente virtual oficial de la Institución Universitaria de Barranquilla.
-
-Tu función es ayudar a estudiantes, docentes y aspirantes.
-
-Si la pregunta es sobre la universidad responde de forma clara.
-
-Si la pregunta no tiene relación con la universidad puedes responder normalmente, pero aclara que eres un asistente institucional.
-
-Pregunta:
-
-${pregunta}
-
-`
-
-        });
-
-        console.log("Respuesta obtenida desde Gemini");
-
-        return result.text;
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-        return "En este momento la IA no está disponible.";
-
-    }
-
-}
-/*==================================
-        GUARDAR CONVERSACIÓN
-==================================*/
-
-async function guardarConversacion(pregunta,respuesta){
-
-    try{
-
-        await conexion.execute(
-
-            `INSERT INTO conversaciones
-            (pregunta,respuesta)
-            VALUES(?,?)`,
-
-            [pregunta,respuesta]
-
-        );
-
-        console.log("Conversación guardada");
-
-    }
-
-    catch(error){
-
-        console.log("No se pudo guardar la conversación");
-
-        console.log(error);
-
-    }
-
-}
-
-/*==================================
-            CHAT
-==================================*/
-
-app.post("/chat",async(req,res)=>{
-
-    try{
-
-        const {pregunta}=req.body;
-
-        if(!pregunta){
-
-            return res.status(400).json({
-
-                respuesta:"Debes escribir una pregunta."
-
-            });
-
+        if (respuestaBD) {
+            return res.json({ respuesta: respuestaBD, fuente: "Base de datos" });
         }
 
-        let respuesta = await buscarRespuesta(pregunta);
-
-        /*==============================
-            SI NO ESTÁ EN MYSQL
-        ==============================*/
-
-        if(!respuesta){
-
-            respuesta = await responderConGemini(pregunta);
-
-        }
-
-        /*==============================
-            GUARDAR HISTORIAL
-        ==============================*/
-
-        await guardarConversacion(
-
-            pregunta,
-
-            respuesta
-
-        );
-
-        /*==============================
-            RESPUESTA
-        ==============================*/
-
-        res.json({
-
-            respuesta
-
+        // 2. Si no encuentra nada en la BD, le pregunta a la Inteligencia Artificial (Groq)
+        const completion = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: "system",
+                    content: "Eres el asistente oficial de la Institución Universitaria de Barranquilla (IUB). Responde con un tono amable, claro y profesional."
+                },
+                {
+                    role: "user",
+                    content: mensaje
+                }
+            ],
+            model: "llama-3.3-70b-versatile"
         });
 
+        const respuestaIA = completion.choices[0].message.content;
+        res.json({ respuesta: respuestaIA, fuente: "IA" });
+
+    } catch (error) {
+        console.error("Error en el servidor:", error);
+        res.status(500).json({ error: "Ocurrió un error al procesar tu solicitud." });
     }
-
-    catch(error){
-
-        console.log("");
-
-        console.log("ERROR GENERAL");
-
-        console.log(error);
-
-        res.status(500).json({
-
-            respuesta:"Ha ocurrido un error interno."
-
-        });
-
-    }
-
 });
-/*==================================
-        INICIAR SERVIDOR
-==================================*/
 
-async function iniciarServidor(){
-
-    await conectarBD();
-
-    app.listen(PORT,()=>{
-
-        console.log("");
-        console.log("======================================");
-        console.log("🤖 IUBBot AI");
-        console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
-        console.log("======================================");
-        console.log("");
-
-    });
-
-}
-
-iniciarServidor();
+// Iniciar el servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
